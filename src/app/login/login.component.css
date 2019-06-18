@@ -1,0 +1,10 @@
+.main {
+    background-color: #9CC7BF;
+    margin-top: 5rem;
+    min-height: 56rem;
+    box-shadow: 5px 5px 5px grey;
+}
+
+body {
+    background-color: lightgray;
+}
