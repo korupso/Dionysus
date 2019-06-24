@@ -8,6 +8,8 @@ import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UkComponent } from './uk/uk.component';
+import { StudentsComponent } from './students/students.component';
+import { SharedService } from './services/SharedService';
 
 @NgModule({
   imports: [
@@ -18,14 +20,20 @@ import { UkComponent } from './uk/uk.component';
     NgbModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
+      { path: 'uks', component: UkComponent },
+      { path: 'uks/:ukName', component: StudentsComponent },
     ])
   ],
   declarations: [
     AppComponent,
     LoginComponent,
-    UkComponent
+    UkComponent,
+    StudentsComponent
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    SharedService
+  ]
 })
 export class AppModule { }
 

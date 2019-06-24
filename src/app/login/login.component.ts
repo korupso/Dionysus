@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css', './css/bootstrap.min.css']
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   username: string;
