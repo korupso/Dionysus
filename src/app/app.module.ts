@@ -10,6 +10,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UkComponent } from './uk/uk.component';
 import { StudentsComponent } from './students/students.component';
 import { SharedService } from './services/SharedService';
+import { SignupComponent } from './signup/signup.component';
+import { AlertComponent } from './directives/alert.component';
+import { AlertService } from './services/alert.service';
 
 @NgModule({
   imports: [
@@ -22,17 +25,21 @@ import { SharedService } from './services/SharedService';
       { path: '', component: LoginComponent },
       { path: 'uks', component: UkComponent },
       { path: 'uks/:ukName', component: StudentsComponent },
+      { path: 'signup', component: SignupComponent }
     ])
   ],
   declarations: [
     AppComponent,
     LoginComponent,
     UkComponent,
-    StudentsComponent
+    StudentsComponent,
+    SignupComponent,
+    AlertComponent
   ],
   bootstrap: [AppComponent],
   providers: [
-    SharedService
+    SharedService,
+    AlertService
   ]
 })
 export class AppModule { }

@@ -34,8 +34,8 @@ export class UkComponent implements OnInit {
     this.http.post(endpoint, body, options).subscribe(
       res => {
         console.log(res);
-        this.sharedService.setUserData(res);
-        this.router.navigate([`/uks/${uk.name}`]);
+        this.sharedService.setUKData(res);
+        this.router.navigate([`/uks/${uk.name}`, { _id: uk._id }]);
       },
       err => console.log(err)
     );

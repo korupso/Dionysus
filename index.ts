@@ -56,6 +56,20 @@ app.post('/api/uks', (req, res) => {
 
 });
 
+app.post('/api/uks/grades', (req, res) => {
+    Uks_Students.find((err, combos) => {
+        var promises = combos.map(combo => {
+            return new Promise((resolve, reject) => {
+                if (combo.uk_id == req.body._id) {
+                    req.body.students.forEach(student => {
+
+                    });
+                }
+            });
+        });
+    });
+});
+
 app.post('/api/uks/specific', (req, res) => {
     Uks_Students.find((err, ids) => {
         let done = [];
@@ -70,7 +84,7 @@ app.post('/api/uks/specific', (req, res) => {
                     Students.find((err, students) => {
                         students.forEach(student => {
                             if (combo.student_id == student._id) {
-                                studentsFromUk.push({ name: (student.fname + " " + student.lname), grade: combo.grade });
+                                studentsFromUk.push({ id: student._id, name: (student.fname + " " + student.lname), grade: combo.grade });
                                 console.log(studentsFromUk);
                                 resolve();
                             }
@@ -91,33 +105,39 @@ app.post('/api/uks/specific', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+    let loggedIn = false;
     if (req.body.username && req.body.password) {
         Vocs.find((err, vocs) => {
-            let loggedIn = false;
+            if (err) res.send("Database error");
             vocs.forEach(voc => {
                 if (voc.username === req.body.username) if (voc.password === req.body.password) loggedIn = true;
             });
             res.send(loggedIn);
         });
     }
+    else res.send(loggedIn);
 });
 
-// create todo and send back all todos after creation
-app.post('/api/vocs', (req, res) => {
+app.post('/signup', (req, res) => {
 
-    // create a todo, information comes from AJAX request from Angular
-    Vocs.create({
-        username: req.body.username,
-        password: req.body.password
-    }, (err, todo) => {
-        if (err)
-            res.send(err);
-
-        // get and return all the todos after you create another
-        Vocs.find((err, todos) => {
+    let worked = true;
+    Vocs.find((err, users) => {
+        users.forEach((user) => {
+            console.log(user.name);
+            if (user.username == req.body.username) worked = false;
+        })
+        Vocs.create({
+            username: req.body.username,
+            password: req.body.password
+        }, (err, users) => {
             if (err)
-                res.send(err)
-            res.json(todos);
+                res.send(err);
+            Vocs.find((err, users) => {
+                if (err)
+                    res.send(err)
+                if (worked) res.json(users);
+                else res.send("Username already exists")
+            });
         });
     });
 

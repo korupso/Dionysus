@@ -1,7 +1,22 @@
-<div style="background-color: lightgray" *ngFor="let student of students">
-  {{ student.name }} <br>
-  {{ student.grade }}
-  <div style="background-color: white">
-    .
-  </div>
+<div class="col-sm-3"></div>
+<div class="col-sm-6 main">
+  <p style="margin-top: 10rem; text-align: center; font-size: 2.5rem">
+    <b>{{ukName}}</b>
+  </p>
+  <span *ngFor="let student of students" style="margin-left: 10%">
+    {{ student.name }}
+    <span style="margin-left: 50%" class="row">
+      <div class="container">
+        <span *ngIf="student.grade; else test" style="margin-left: 50%">
+          {{ student.grade }}
+        </span>
+        <ng-template #test>
+          <input type="text" style="margin-left: 45%; width: 20%">
+        </ng-template>
+      </div>
+    </span>
+  </span>
+  <button style="background-color: #7e91af; color: lightgray; margin-left: 40%; width: 20%; text-align: center"
+    (click)="save()">SAVE</button>
 </div>
+<div class="sm-col-3"></div>

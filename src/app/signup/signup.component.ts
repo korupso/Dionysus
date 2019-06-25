@@ -1,21 +1,24 @@
-import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AlertService } from '../services/alert.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.css']
 })
-export class LoginComponent {
+export class SignupComponent implements OnInit {
+  ngOnInit() {
+  }
+
   username: string;
   password: string;
 
   constructor(private http: HttpClient, private router: Router, private alertService: AlertService) { }
 
   submit() {
-    let endpoint: string = "http://localhost:3000/login";
+    let endpoint: string = "http://localhost:3000/signup";
     let body = { username: this.username, password: this.password };
 
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -23,13 +26,12 @@ export class LoginComponent {
 
     this.http.post(endpoint, body, options).subscribe(
       res => {
-        if (res) {
-          this.router.navigate(["/uks"]);
-        } else {
-          this.alertService.error("Login failed");
-        }
+        if (res) this.router.navigate(["/uks"]);
+        else this.alertService.error("User already exists");
       },
       err => console.log(err)
     );
   }
+
+
 }

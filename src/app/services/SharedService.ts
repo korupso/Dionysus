@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class SharedService {
-    ukData;
+    ukData = null;
     constructor() {
         this.ukData = {};
     }
-    setUserData(val: object) {
+    setUKData(val: object) {
         this.ukData = val;
         console.log(this.ukData);
     }
-    getUserData() {
+    getUKData() {
         console.log(this.ukData);
         return this.ukData;
     }

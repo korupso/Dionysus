@@ -1,6 +1,15 @@
-<div style="background-color: lightgray" *ngFor="let uk of uks" (click)="goToUk(uk)">
-  {{uk.name}}
-  <div style="background-color: white">
-    .
+<div class="col-sm-3"></div>
+<div class="col-sm-6 main">
+  <p style="margin-top: 10rem; text-align: center; font-size: 2.5rem">
+    <b>ÜK Overview</b>
+  </p>
+  <div *ngFor="let uk of uks; let i = index" class="col-sm-12">
+    <span *ngIf="i % 2 == 0">
+      <span style="margin-left: 30%; background-color: lightgray" (click)="goToUk(uk)">{{uks[i].name}}</span>
+      <span style="margin-left: 30%; background-color: lightgray" (click)="goToUk(uk)">{{uks[i + 1].name}}</span>
+    </span>
+    <br>
+    <br>
   </div>
 </div>
+<div class="col-sm-3"></div>
