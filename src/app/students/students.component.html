@@ -3,20 +3,25 @@
   <p style="margin-top: 10rem; text-align: center; font-size: 2.5rem">
     <b>{{ukName}}</b>
   </p>
-  <span *ngFor="let student of students" style="margin-left: 10%">
-    {{ student.name }}
-    <span style="margin-left: 50%" class="row">
-      <div class="container">
-        <span *ngIf="student.grade; else test" style="margin-left: 50%">
-          {{ student.grade }}
+  <span *ngFor="let student of students; let i = index;" style="margin-left: 10%">
+    <div class="container">
+      {{ student.name }}
+      <span style="position: absolute; margin-left: 70%" class="row">
+        <span *ngIf="student.grade; else noGrade" style="margin-left: 50%">
+          <div contenteditable="true" name="grades">
+            {{ student.grade }}
+          </div>
         </span>
-        <ng-template #test>
-          <input type="text" style="margin-left: 45%; width: 20%">
+        <ng-template #noGrade>
+          <div contenteditable="true" name="grades">
+            NaN
+          </div>
         </ng-template>
-      </div>
-    </span>
+      </span>
+    </div>
   </span>
-  <button style="background-color: #7e91af; color: lightgray; margin-left: 40%; width: 20%; text-align: center"
-    (click)="save()">SAVE</button>
+  <br>
+  <button style="background-color: #7e91af; color: lightgray; margin-left: 40%; width: 20%" (click)="save()"><span
+      style="text-align: center">SAVE</span></button>
 </div>
 <div class="sm-col-3"></div>

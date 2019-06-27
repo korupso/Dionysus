@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { SharedService } from '../services/SharedService';
@@ -11,7 +11,9 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 })
 export class StudentsComponent implements OnInit {
 
-  students: any = [];
+  gradesHTML: NodeListOf<HTMLElement> = document.getElementsByName("grades");
+  grades: string[] = [];
+  students: { id: string, name: string, grade: string }[] = [];
   ukName: string = "";
   ukId: string = "";
 
@@ -19,16 +21,16 @@ export class StudentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.sharedService.getUKData() != null) {
+    if (this.sharedService.getUKData()) {
       this.students = this.sharedService.getUKData().studentsFromUk;
       console.log(this.sharedService.getUKData());
     }
     else {
       console.log(this.sharedService.getUKData());
       this.route.params.subscribe(params => {
-        console.log(this.route.params);
         this.ukId = params.ukId;
         this.ukName = params.ukName;
+        console.log(this.ukId, this.ukName)
       })
 
       let endpoint: string = "http://localhost:3000/api/uks/specific";
@@ -55,8 +57,37 @@ export class StudentsComponent implements OnInit {
   }
 
   save() {
+    this.gradesHTML.forEach(gradeHTML => this.grades.push(gradeHTML.innerText));
+    console.log(this.grades);
     let endpoint: string = "http://localhost:3000/api/uks/grades";
-    let body = { _id: this.ukId, students: this.students };
+    let localStudents = [];
+    for (let i = 0; i < this.students.length; i++) {
+      localStudents.push({ id: this.students[i].id, name: this.students[i].name, grade: this.grades[i] })
+    }
+    let body = { _id: this.ukId, students: localStudents };
+
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    let options = { headers: headers };
+
+    console.log(this.grades);
+
+    for (let i = 0; i < this.students.length; i++) {
+      console.log(this.students[i].name + " " + this.grades[i]);
+    }
+
+    this.http.post(endpoint, body, options).subscribe(
+      res => {
+        console.log(res);
+        this.grades = [];
+        this.goToUk();
+      },
+      err => console.log(err)
+    );
+  }
+
+  goToUk() {
+    let endpoint: string = "http://localhost:3000/api/uks/specific";
+    let body = { _id: this.ukId };
 
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     let options = { headers: headers };
@@ -64,7 +95,11 @@ export class StudentsComponent implements OnInit {
     console.log(body);
 
     this.http.post(endpoint, body, options).subscribe(
-      res => console.log(res),
+      res => {
+        console.log(res);
+        this.sharedService.setUKData(res);
+        this.router.navigate([`/uks/${this.ukName}`, { _id: this.ukId }]);
+      },
       err => console.log(err)
     );
   }

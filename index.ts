@@ -59,43 +59,7 @@ app.post('/api/uks', (req, res) => {
     });
 
 });
-/*
-app.post('/api/uks/grades', (req, res) => {
-    Uks_Students.find((err, combos) => {
 
-        // Array declarations
-        var tmp = [];
-        var promises = [];
-
-        // Save them promises
-        promises = combos.map(combo => {
-            return new Promise((resolve, reject) => {
-
-                // Check if doc has the right uk id
-                if (combo.uk_id == req.body._id) {
-
-                    req.body.students.forEach(localStudent => {
-                        Uks_Students.findOneAndUpdate({ _id: combo._id }, { grade: localStudent.grade }, { upsert: true });
-                        console.log({ _id: combo._id }, { grade: localStudent.grade });
-                    });
-                }
-                resolve();
-            });
-        });
-        promises.push(new Promise((resolve, reject) => {
-            Uks_Students.find((err, uks_students) => {
-                uks_students.forEach(uks_student => {
-                    tmp.push(uks_student);
-                });
-                resolve();
-            });
-        }))
-        Promise.all(promises).then(() => {
-            res.send(tmp);
-        });
-    });
-});
-*/
 // Update grades =======================================================
 app.post('/api/uks/grades', (req, res) => {
     let combos = [];
