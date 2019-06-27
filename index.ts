@@ -1,3 +1,6 @@
+import { CommonModule } from "@angular/common";
+import { cpus, tmpdir } from "os";
+
 var express = require('express');
 var app = express(); 								// create our app w/ express
 var mongoose = require('mongoose'); 					// mongoose for mongodb
@@ -37,6 +40,7 @@ app.get('/api/uks', (req, res) => {
     });
 });
 
+// Get all uks ===========================================================
 app.post('/api/uks', (req, res) => {
 
     // create a todo, information comes from AJAX request from Angular
@@ -55,21 +59,95 @@ app.post('/api/uks', (req, res) => {
     });
 
 });
-
+/*
 app.post('/api/uks/grades', (req, res) => {
     Uks_Students.find((err, combos) => {
-        var promises = combos.map(combo => {
-            return new Promise((resolve, reject) => {
-                if (combo.uk_id == req.body._id) {
-                    req.body.students.forEach(student => {
 
+        // Array declarations
+        var tmp = [];
+        var promises = [];
+
+        // Save them promises
+        promises = combos.map(combo => {
+            return new Promise((resolve, reject) => {
+
+                // Check if doc has the right uk id
+                if (combo.uk_id == req.body._id) {
+
+                    req.body.students.forEach(localStudent => {
+                        Uks_Students.findOneAndUpdate({ _id: combo._id }, { grade: localStudent.grade }, { upsert: true });
+                        console.log({ _id: combo._id }, { grade: localStudent.grade });
                     });
                 }
+                resolve();
             });
+        });
+        promises.push(new Promise((resolve, reject) => {
+            Uks_Students.find((err, uks_students) => {
+                uks_students.forEach(uks_student => {
+                    tmp.push(uks_student);
+                });
+                resolve();
+            });
+        }))
+        Promise.all(promises).then(() => {
+            res.send(tmp);
         });
     });
 });
+*/
+// Update grades =======================================================
+app.post('/api/uks/grades', (req, res) => {
+    let combos = [];
+    let newCombos = [];
+    let localStudents = req.body.students;
+    let ukId = req.body._id;
 
+    Uks_Students.find((err, wombo) => {
+        wombo.forEach(combo => {
+            if (combo.uk_id == ukId) combos.push(combo);
+        });
+
+        combos.forEach(combo => {
+            localStudents.forEach(localStudent => {
+                if (combo.student_id == localStudent.id) newCombos.push({
+                    _id: combo._id,
+                    student_id: combo.student_id,
+                    uk_id: ukId,
+                    grade: localStudent.grade
+                })
+            })
+        });
+
+        let promises = newCombos.map(newCombo => {
+            return new Promise((resolve, reject) => {
+                var query = { '_id': newCombo._id };
+                Uks_Students.findOneAndUpdate(query, newCombo, { upsert: true }, function (err, doc) {
+                    if (err) return res.send(500, { error: err });
+
+                    Uks_Students.find((err, uks_students) => {
+                        combos = [];
+                        uks_students.forEach(uk_student =>
+                            combos.push(uk_student));
+                        resolve();
+                    });
+                });
+            })
+
+        });
+
+        Promise.all(promises).then(() => {
+            res.send({
+                ukId: ukId,
+                combos: combos,
+                localStudents: localStudents
+            });
+        })
+
+    });
+});
+
+// Get users from uk =======================================================
 app.post('/api/uks/specific', (req, res) => {
     Uks_Students.find((err, ids) => {
         let done = [];
@@ -104,6 +182,7 @@ app.post('/api/uks/specific', (req, res) => {
     });
 });
 
+// Login ===========================================================
 app.post('/login', (req, res) => {
     let loggedIn = false;
     if (req.body.username && req.body.password) {
@@ -118,6 +197,7 @@ app.post('/login', (req, res) => {
     else res.send(loggedIn);
 });
 
+// Signup ===========================================================
 app.post('/signup', (req, res) => {
 
     let worked = true;
