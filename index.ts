@@ -118,44 +118,36 @@ app.post('/api/uks/specific', (req, res) => {
         ids.forEach(combo => done.push(false));
         let studentsFromUk = [];
         let empty = true;
-        var promises = ids.map(combo => {
-            return new Promise((resolve, reject) => {
-                if (combo.uk_id == req.body._id) {
-                    console.log(combo.uk_id + " != " + req.body._id);
-                    empty = false;
-                    Students.find((err, students) => {
-                        students.forEach(student => {
-                            if (combo.student_id == student._id) {
-                                studentsFromUk.push({ id: student._id, name: (student.fname + " " + student.lname), grade: combo.grade });
-                                console.log(studentsFromUk);
-                                resolve();
-                            }
-                        });
+        for (let i = 0; i < ids.length; i++) {
+            if (ids[i].uk_id == req.body._id) {
+                empty = false;
+                Students.find((err, students) => {
+                    students.forEach(student => {
+                        if (ids[i].student_id == student._id) {
+                            studentsFromUk.push({ id: student._id, name: (student.fname + " " + student.lname), grade: ids[i].grade });
+                        }
                     });
-                }
-            });
-        });
-
-        if (empty) res.send([]);
-        Promise.all(promises)
-            .then(() => {
-                console.log("done");
-                res.send({ ukId: req.body._id, studentsFromUk: studentsFromUk })
-            })
-            .catch(console.error);
+                    console.log(studentsFromUk);
+                    if (ids.length - 2 == i) res.send({ studentsFromUk: studentsFromUk });
+                });
+            }
+        };
     });
 });
 
 // Profile Data ====================================================
 app.post('/profile', (req, res) => {
-    let studentId = req.body.id;
-    let resStudent;
+    let studentId = req.body.id.studentId;
+    console.log(studentId);
     let uks: { uk, grade }[] = [];
     let combos = [];
+    let studentName: string;
 
     Students.find((err, students) => {
         students.forEach(student => {
-            if (student._id == studentId) resStudent = student;
+            console.log(studentId, student._id);
+            if (student._id == studentId) studentName = student.fname + " " + student.lname;
+            console.log(student);
         });
         Uks_Students.find((err, uks_students) => {
             uks_students.forEach(uk_student => {
@@ -166,7 +158,7 @@ app.post('/profile', (req, res) => {
                     remUks.forEach(uk => {
                         if (combos[i].uk_id == uk._id) uks.push({ uk: uk, grade: combos[i].grade });
                     });
-                    if (combos.length - 1 == i) res.send(uks);
+                    if (combos.length - 1 == i) res.send({ name: studentName, uks: uks });
                 });
             }
         });

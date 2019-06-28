@@ -21,39 +21,28 @@ export class StudentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.sharedService.getUKData()) {
-      this.students = this.sharedService.getUKData().studentsFromUk;
-      console.log(this.sharedService.getUKData());
-    }
-    else {
-      console.log(this.sharedService.getUKData());
-      this.route.params.subscribe(params => {
-        this.ukId = params.ukId;
-        this.ukName = params.ukName;
-        console.log(this.ukId, this.ukName)
-      })
+    let endpoint = "http://localhost:3000/api/uks/specific";
 
-      let endpoint: string = "http://localhost:3000/api/uks/specific";
-      let body = { _id: this.ukId };
+    this.route.params.subscribe(params => {
+      this.ukId = params._id;
+      this.ukName = params.ukName;
+      console.log(this.ukId, this.ukName)
+    })
 
-      let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-      let options = { headers: headers };
+    let body = { _id: this.ukId };
 
-      console.log(body);
+    console.log(JSON.stringify(body));
 
-      this.http.post(endpoint, body, options).subscribe(
-        res => {
-          console.log(res);
-          this.sharedService.setUKData(res);
-          this.router.navigate([`/uks/${this.ukName}`]);
-        },
-        err => console.log(err)
-      );
-    }
-    this.route.params.subscribe((uk) => {
-      this.ukName = uk.ukName;
-      this.ukId = uk._id;
-    });
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    let options = { headers: headers };
+
+    this.http.post(endpoint, body, options).subscribe(
+      res => {
+        let realRes: any = res;
+        this.students = realRes.studentsFromUk;
+      },
+      err => console.log(err)
+    );
   }
 
   save() {
@@ -102,6 +91,10 @@ export class StudentsComponent implements OnInit {
       },
       err => console.log(err)
     );
+  }
+
+  goToProfile(studentId: string) {
+    this.router.navigate([`/profile/${studentId}`]);
   }
 
 }

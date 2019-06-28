@@ -5,8 +5,9 @@
   </p>
   <div *ngFor="let uk of uks; let i = index" class="col-sm-12">
     <span *ngIf="i % 2 == 0">
-      <span style="margin-left: 30%; background-color: lightgray" (click)="goToUk(uk)">{{uks[i].name}}</span>
-      <span style="margin-left: 30%; background-color: lightgray" (click)="goToUk(uk)">{{uks[i + 1].name}}</span>
+      <span style="margin-left: 30%; background-color: lightgray" (click)="goToUk(uks[i])">{{uks[i].name}}</span>
+      <span style="margin-left: 30%; background-color: lightgray"
+        (click)="goToUk(uks[i + 1])">{{uks[i + 1].name}}</span>
     </span>
     <br>
     <br>

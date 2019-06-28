@@ -13,6 +13,7 @@ import { SharedService } from './services/SharedService';
 import { SignupComponent } from './signup/signup.component';
 import { AlertComponent } from './directives/alert.component';
 import { AlertService } from './services/alert.service';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { AlertService } from './services/alert.service';
       { path: '', component: LoginComponent },
       { path: 'uks', component: UkComponent },
       { path: 'uks/:ukName', component: StudentsComponent },
-      { path: 'signup', component: SignupComponent }
+      { path: 'signup', component: SignupComponent },
+      { path: 'profile/:studentId', component: ProfileComponent }
     ])
   ],
   declarations: [
@@ -34,7 +36,8 @@ import { AlertService } from './services/alert.service';
     UkComponent,
     StudentsComponent,
     SignupComponent,
-    AlertComponent
+    AlertComponent,
+    ProfileComponent
   ],
   bootstrap: [AppComponent],
   providers: [

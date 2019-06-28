@@ -1,17 +1,17 @@
 <div class="col-sm-3"></div>
 <div class="col-sm-6 main">
   <p style="margin-top: 10rem; text-align: center; font-size: 2.5rem">
-    <b>{{ukName}}</b>
+    <b>{{ name }}</b>
   </p>
-  <span *ngFor="let student of students; let i = index;" style="margin-left: 10%">
+  <span *ngFor="let uk of uks; let i = index;" style="margin-left: 10%">
     <div class="container">
-      <span (click)="goToProfile(student.id)">
-        {{ student.name }}
+      <span (click)="goToUk(uk.uk)">
+        {{ uk.uk.name }}
       </span>
       <span style="position: absolute; margin-left: 70%" class="row">
-        <span *ngIf="student.grade; else noGrade" style="margin-left: 50%">
+        <span *ngIf="uk.grade; else noGrade" style="margin-left: 50%">
           <div contenteditable="true" name="grades">
-            {{ student.grade }}
+            {{ uk.grade }}
           </div>
         </span>
         <ng-template #noGrade>
