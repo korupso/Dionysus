@@ -11,13 +11,13 @@ var bodyParser = require('body-parser'); 	// pull information from HTML POST (ex
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var async = require('async');
 
-// Modules =====================================================================
+// Modules =========================================================
 var Vocs = require('./models/vocs.ts');
 var Uks = require('./models/uks.ts');
 var Uks_Students = require('./models/uks_students.ts');
 var Students = require('./models/students.ts');
 
-// configuration ===============================================================
+// configuration ===================================================
 mongoose.connect('mongodb+srv://mac:jwheja@m133lb02-0rmsu.mongodb.net/m133lb02?retryWrites=true&w=majority'); 	// connect to mongoDB database on modulus.io
 
 app.use(morgan('dev')); 										// log every request to the console
@@ -26,7 +26,7 @@ app.use(bodyParser.json()); 									// parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(methodOverride());
 
-// routes ======================================================================
+// routes ==========================================================
 app.get('/api/uks', (req, res) => {
 
     // use mongoose to get all todos in the database
@@ -40,7 +40,7 @@ app.get('/api/uks', (req, res) => {
     });
 });
 
-// Get all uks ===========================================================
+// Get all uks =====================================================
 app.post('/api/uks', (req, res) => {
 
     // create a todo, information comes from AJAX request from Angular
@@ -51,16 +51,16 @@ app.post('/api/uks', (req, res) => {
             res.send(err);
 
         // get and return all the todos after you create another
-        Uks.find((err, todos) => {
+        Uks.find((err, uks) => {
             if (err)
                 res.send(err)
-            res.json(todos);
+            res.json(uks);
         });
     });
 
 });
 
-// Update grades =======================================================
+// Update grades ===================================================
 app.post('/api/uks/grades', (req, res) => {
     let combos = [];
     let newCombos = [];
@@ -111,7 +111,7 @@ app.post('/api/uks/grades', (req, res) => {
     });
 });
 
-// Get users from uk =======================================================
+// Get users from uk ===============================================
 app.post('/api/uks/specific', (req, res) => {
     Uks_Students.find((err, ids) => {
         let done = [];
@@ -146,6 +146,33 @@ app.post('/api/uks/specific', (req, res) => {
     });
 });
 
+// Profile Data ====================================================
+app.post('/profile', (req, res) => {
+    let studentId = req.body.id;
+    let resStudent;
+    let uks: { uk, grade }[] = [];
+    let combos = [];
+
+    Students.find((err, students) => {
+        students.forEach(student => {
+            if (student._id == studentId) resStudent = student;
+        });
+        Uks_Students.find((err, uks_students) => {
+            uks_students.forEach(uk_student => {
+                if (uk_student.student_id == studentId) combos.push(uk_student);
+            });
+            for (let i = 0; i < combos.length; i++) {
+                Uks.find((err, remUks) => {
+                    remUks.forEach(uk => {
+                        if (combos[i].uk_id == uk._id) uks.push({ uk: uk, grade: combos[i].grade });
+                    });
+                    if (combos.length - 1 == i) res.send(uks);
+                });
+            }
+        });
+    });
+});
+
 // Login ===========================================================
 app.post('/login', (req, res) => {
     let loggedIn = false;
@@ -161,7 +188,7 @@ app.post('/login', (req, res) => {
     else res.send(loggedIn);
 });
 
-// Signup ===========================================================
+// Signup ==========================================================
 app.post('/signup', (req, res) => {
 
     let worked = true;
@@ -187,11 +214,11 @@ app.post('/signup', (req, res) => {
 
 });
 
-// application -------------------------------------------------------------
+// application =====================================================
 app.get('*', (req, res) => {
     res.sendfile('./src/index.html'); // load the single view file (angular will handle the page changes on the front-end)
 });
 
-// listen (start app with node server.js) ======================================
+// listen (start app with node server.js) ==========================
 app.listen(port);
 console.log("App listening on port " + port);
