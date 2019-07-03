@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
 
@@ -34,10 +34,16 @@ export class ProfileComponent implements OnInit {
         console.log(res);
         let realRes: any = res;
         this.name = realRes.name;
-        this.uks = realRes.uks;
+        if (realRes.uks) this.uks = realRes.uks;
         console.log(this.name);
       },
-      err => console.log(err)
+      err => {
+        console.log(err);
+        let realRes: any = err;
+        this.name = realRes.error.text;
+        if (realRes.uks) this.uks = realRes.uks;
+        console.log(this.name);
+      }
     );
   }
 

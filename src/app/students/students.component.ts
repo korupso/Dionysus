@@ -3,11 +3,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { SharedService } from '../services/SharedService';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',
-  styleUrls: ['./students.component.css']
+  styleUrls: ['./students.component.scss']
 })
 export class StudentsComponent implements OnInit {
 
@@ -16,6 +17,7 @@ export class StudentsComponent implements OnInit {
   students: { id: string, name: string, grade: string }[] = [];
   ukName: string = "";
   ukId: string = "";
+  myControl = new FormControl();
 
   constructor(private router: Router, private route: ActivatedRoute, private sharedService: SharedService, private http: HttpClient) {
   }
@@ -40,6 +42,7 @@ export class StudentsComponent implements OnInit {
       res => {
         let realRes: any = res;
         this.students = realRes.studentsFromUk;
+        console.log(this.students);
       },
       err => console.log(err)
     );
@@ -86,7 +89,6 @@ export class StudentsComponent implements OnInit {
     this.http.post(endpoint, body, options).subscribe(
       res => {
         console.log(res);
-        this.sharedService.setUKData(res);
         this.router.navigate([`/uks/${this.ukName}`, { _id: this.ukId }]);
       },
       err => console.log(err)

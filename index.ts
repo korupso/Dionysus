@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { cpus, tmpdir } from "os";
+import { findReadVarNames } from "@angular/compiler/src/output/output_ast";
 
 var express = require('express');
 var app = express(); 								// create our app w/ express
@@ -40,24 +41,34 @@ app.get('/api/uks', (req, res) => {
     });
 });
 
-// Get all uks =====================================================
-app.post('/api/uks', (req, res) => {
+// Create new students =============================================
+app.post('/api/students', (req, res) => {
 
-    // create a todo, information comes from AJAX request from Angular
-    Uks.create({
-        name: req.body.name
+    let fnameArr = req.body.name.split(" ");
+    fnameArr.splice(-1, 1);
+    let fname = fnameArr.join().replace(/,/g, ' ');
+    let lname = req.body.name.split(" ")[req.body.name.split(" ").length - 1];
+    Students.create({
+        fname: fname,
+        lname: lname
     }, (err, todo) => {
         if (err)
             res.send(err);
 
-        // get and return all the todos after you create another
-        Uks.find((err, uks) => {
+        Students.find((err, students) => {
             if (err)
                 res.send(err)
-            res.json(uks);
+            res.json(students);
         });
     });
 
+});
+
+app.get('/api/students', (req, res) => {
+    Students.find((err, students) => {
+        if (err) res.send(err);
+        res.send(students);
+    });
 });
 
 // Update grades ===================================================
@@ -113,46 +124,46 @@ app.post('/api/uks/grades', (req, res) => {
 
 // Get users from uk ===============================================
 app.post('/api/uks/specific', (req, res) => {
-    Uks_Students.find((err, ids) => {
+    Uks_Students.find((err, ids: any[]) => {
         let done = [];
         ids.forEach(combo => done.push(false));
         let studentsFromUk = [];
         let empty = true;
+        let promises = [];
         for (let i = 0; i < ids.length; i++) {
             if (ids[i].uk_id == req.body._id) {
                 empty = false;
-                Students.find((err, students) => {
+                promises.push(Students.find((err, students) => {
                     students.forEach(student => {
                         if (ids[i].student_id == student._id) {
                             studentsFromUk.push({ id: student._id, name: (student.fname + " " + student.lname), grade: ids[i].grade });
                         }
                     });
-                    console.log(studentsFromUk);
-                    if (ids.length - 2 == i) res.send({ studentsFromUk: studentsFromUk });
-                });
+                }));
             }
         };
+        Promise.all(promises).then(() => {
+            res.send({ studentsFromUk: studentsFromUk });
+        })
     });
 });
 
 // Profile Data ====================================================
 app.post('/profile', (req, res) => {
     let studentId = req.body.id.studentId;
-    console.log(studentId);
     let uks: { uk, grade }[] = [];
     let combos = [];
     let studentName: string;
 
     Students.find((err, students) => {
         students.forEach(student => {
-            console.log(studentId, student._id);
             if (student._id == studentId) studentName = student.fname + " " + student.lname;
-            console.log(student);
         });
         Uks_Students.find((err, uks_students) => {
             uks_students.forEach(uk_student => {
                 if (uk_student.student_id == studentId) combos.push(uk_student);
             });
+            if (combos.length == 0) res.send(studentName);
             for (let i = 0; i < combos.length; i++) {
                 Uks.find((err, remUks) => {
                     remUks.forEach(uk => {

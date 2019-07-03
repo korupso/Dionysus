@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -14,6 +15,9 @@ import { SignupComponent } from './signup/signup.component';
 import { AlertComponent } from './directives/alert.component';
 import { AlertService } from './services/alert.service';
 import { ProfileComponent } from './profile/profile.component';
+import { MaterialModule } from './material.module';
+import { MatSelectModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
+import { AddstudentComponent } from './addstudent/addstudent.component';
 
 @NgModule({
   imports: [
@@ -22,12 +26,18 @@ import { ProfileComponent } from './profile/profile.component';
     FormsModule,
     HttpClientModule,
     NgbModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    MatSelectModule,
+    MatInputModule,
+    MatAutocompleteModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'uks', component: UkComponent },
       { path: 'uks/:ukName', component: StudentsComponent },
       { path: 'signup', component: SignupComponent },
-      { path: 'profile/:studentId', component: ProfileComponent }
+      { path: 'profile/:studentId', component: ProfileComponent },
+      { path: 'students', component: AddstudentComponent }
     ])
   ],
   declarations: [
@@ -37,7 +47,8 @@ import { ProfileComponent } from './profile/profile.component';
     StudentsComponent,
     SignupComponent,
     AlertComponent,
-    ProfileComponent
+    ProfileComponent,
+    AddstudentComponent
   ],
   bootstrap: [AppComponent],
   providers: [
