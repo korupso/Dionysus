@@ -51,7 +51,7 @@ app.post('/api/students', (req, res) => {
     Students.create({
         fname: fname,
         lname: lname
-    }, (err, todo) => {
+    }, (err, student) => {
         if (err)
             res.send(err);
 
@@ -77,6 +77,7 @@ app.post('/api/uks/grades', (req, res) => {
     let newCombos = [];
     let localStudents = req.body.students;
     let ukId = req.body._id;
+    let newStudent: { id: string, grade: string } = req.body.newStudent;
 
     Uks_Students.find((err, wombo) => {
         wombo.forEach(combo => {
@@ -108,16 +109,25 @@ app.post('/api/uks/grades', (req, res) => {
                     });
                 });
             })
-
         });
 
-        Promise.all(promises).then(() => {
-            res.send({
-                ukId: ukId,
-                combos: combos,
-                localStudents: localStudents
-            });
-        })
+        new Promise((resolve, reject) => {
+            Uks_Students.create({
+                uk_id: ukId,
+                student_id: newStudent.id,
+                grade: newStudent.grade
+            }, (err, combo) => {
+                resolve();
+            })
+        }).then(() => {
+            Promise.all(promises).then(() => {
+                res.send({
+                    ukId: ukId,
+                    combos: combos,
+                    localStudents: localStudents
+                });
+            })
+        });
 
     });
 });

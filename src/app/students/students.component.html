@@ -1,6 +1,14 @@
 <div class="col-sm-3"></div>
 <div class="col-sm-6 main">
-  <p style="margin-top: 10rem; text-align: center; font-size: 2.5rem">
+  <div class="container">
+    <button class="btn" style="background-color: #7e91af; margin-top: 2%; color: lightgray"
+      routerLink="/uks">Home</button>
+    <button class="btn" style="background-color: #7e91af; margin-top: 2%; margin-left: 12.5%; color: lightgray"
+      routerLink="/">Logout</button>
+    <button class="btn" style="background-color: #7e91af; margin-top: 2%; margin-left: 7%; color: lightgray"
+      routerLink="/students">Manage Students</button>
+  </div>
+  <p style="margin-top: 5rem; text-align: center; font-size: 2.5rem">
     <b>{{ukName}}</b>
   </p>
   <span *ngFor="let student of students; let i = index;" style="margin-left: 10%">
@@ -23,8 +31,15 @@
     </div>
   </span>
   <div class="container">
-
-    <span style="position: absolute; margin-left: 70%" class="row">
+    <mat-form-field>
+      <mat-label>New Student</mat-label>
+      <mat-select [(value)]="newStudent">
+        <mat-option *ngFor="let student of allStudents" value="{{ student.id }}">
+          {{student.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <span style="position: absolute; margin-left: 72%; margin-top: 3%" class="row">
       <div contenteditable="true" name="grades">
         0.0
       </div>

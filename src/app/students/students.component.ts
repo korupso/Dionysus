@@ -15,15 +15,18 @@ export class StudentsComponent implements OnInit {
   gradesHTML: NodeListOf<HTMLElement> = document.getElementsByName("grades");
   grades: string[] = [];
   students: { id: string, name: string, grade: string }[] = [];
+  allStudents: { id: string, name: string }[] = [];
   ukName: string = "";
   ukId: string = "";
   myControl = new FormControl();
+  newStudent: string = "";
 
   constructor(private router: Router, private route: ActivatedRoute, private sharedService: SharedService, private http: HttpClient) {
   }
 
   ngOnInit() {
     let endpoint = "http://localhost:3000/api/uks/specific";
+    let endpointAllStudents = "http://localhost:3000/api/students";
 
     this.route.params.subscribe(params => {
       this.ukId = params._id;
@@ -43,6 +46,19 @@ export class StudentsComponent implements OnInit {
         let realRes: any = res;
         this.students = realRes.studentsFromUk;
         console.log(this.students);
+
+        this.http.get(endpointAllStudents).subscribe(
+          res => {
+            (<any>res).forEach(student => {
+              let valid = true;
+              this.students.forEach(lstudent => {
+                if (student._id == lstudent.id) valid = false;
+              });
+              if (valid) this.allStudents.push({ id: student._id, name: student.fname + " " + student.lname });
+            });
+          },
+          err => console.log(err)
+        );
       },
       err => console.log(err)
     );
@@ -54,9 +70,9 @@ export class StudentsComponent implements OnInit {
     let endpoint: string = "http://localhost:3000/api/uks/grades";
     let localStudents = [];
     for (let i = 0; i < this.students.length; i++) {
-      localStudents.push({ id: this.students[i].id, name: this.students[i].name, grade: this.grades[i] })
+      localStudents.push({ id: this.students[i].id, grade: this.grades[i] })
     }
-    let body = { _id: this.ukId, students: localStudents };
+    let body = { _id: this.ukId, students: localStudents, newStudent: { id: this.newStudent, grade: this.grades[this.grades.length - 1] } };
 
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     let options = { headers: headers };
@@ -66,6 +82,8 @@ export class StudentsComponent implements OnInit {
     for (let i = 0; i < this.students.length; i++) {
       console.log(this.students[i].name + " " + this.grades[i]);
     }
+
+    console.log(JSON.stringify(body));
 
     this.http.post(endpoint, body, options).subscribe(
       res => {

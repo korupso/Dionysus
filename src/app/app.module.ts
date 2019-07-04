@@ -16,7 +16,7 @@ import { AlertComponent } from './directives/alert.component';
 import { AlertService } from './services/alert.service';
 import { ProfileComponent } from './profile/profile.component';
 import { MaterialModule } from './material.module';
-import { MatSelectModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
+import { MatSelectModule, MatInputModule, MatAutocompleteModule, MatOptionSelectionChange, MatOptionModule, MatIconModule } from '@angular/material';
 import { AddstudentComponent } from './addstudent/addstudent.component';
 
 @NgModule({
@@ -29,8 +29,10 @@ import { AddstudentComponent } from './addstudent/addstudent.component';
     BrowserAnimationsModule,
     MaterialModule,
     MatSelectModule,
+    MatOptionModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatIconModule,
     RouterModule.forRoot([
       { path: '', component: LoginComponent },
       { path: 'uks', component: UkComponent },

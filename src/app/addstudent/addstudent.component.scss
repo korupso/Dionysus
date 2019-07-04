@@ -71,7 +71,6 @@ textarea {
   width: $width;
   border: none;
   border-radius: 0;
-  border-bottom: 1px solid black;
   &:focus {
     outline: none;
   }
@@ -91,9 +90,7 @@ input[type="password"] {
 }
 
 input[type="text"] {
-  position: relative;
   display: block;
-  margin-left: 37.5%;
   text-align: center;
 }
 
