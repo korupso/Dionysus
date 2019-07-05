@@ -28,6 +28,24 @@ export class AddstudentComponent implements OnInit {
     this.router.navigate([`/profile/${studentId}`]);
   }
 
+  deleteStudent(id: string) {
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    let options = { headers: headers };
+
+    let body = { id: id };
+
+    this.http.post("http://localhost:3000/rem/students", body, options).subscribe(
+      res => {
+        this.students = [];
+        this.ngOnInit();
+      },
+      err => {
+        this.students = [];
+        this.ngOnInit();
+      }
+    )
+  }
+
   save() {
     let newStudent = (<HTMLInputElement>document.getElementById("newStudent")).value;
 

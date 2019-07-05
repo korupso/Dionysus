@@ -18,11 +18,15 @@
       style="text-align: center">SAVE</span></button>
   <br>
   <br>
-  <div class="container" *ngFor="let student of students" (click)="goToProfile(student.id)">
-    {{ student.name }}
+  <div class="container" *ngFor="let student of students">
+    <span (click)="goToProfile(student.id)">
+      {{ student.name }}
+    </span>
     <span style="position: absolute; margin-left: 85%">
-      <button style="font-size: 60%; padding: 10%; background-color: rgb(248, 110, 110)">DELETE</button>
+      <button style="font-size: 60%; padding: 10%; background-color: rgb(248, 110, 110)"
+        (click)="deleteStudent(student.id)">DELETE</button>
     </span>
   </div>
+  <br>
 </div>
 <div class="sm-col-3"></div>

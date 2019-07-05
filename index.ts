@@ -27,23 +27,22 @@ app.use(bodyParser.json()); 									// parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(methodOverride());
 
-// routes ==========================================================
+// Get all uks =====================================================
 app.get('/api/uks', (req, res) => {
 
-    // use mongoose to get all todos in the database
+    // use mongoose to get all uks in the database
     Uks.find((err, vocs) => {
 
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err)
             res.send(err)
 
-        res.json(vocs); // return all todos in JSON format
+        res.json(vocs); // return all uks in JSON format
     });
 });
 
 // Create new students =============================================
 app.post('/api/students', (req, res) => {
-
     let fnameArr = req.body.name.split(" ");
     fnameArr.splice(-1, 1);
     let fname = fnameArr.join().replace(/,/g, ' ');
@@ -130,6 +129,14 @@ app.post('/api/uks/grades', (req, res) => {
         });
 
     });
+});
+
+app.post('/rem/students', (req, res) => {
+    console.log(req.body);
+    Students.findByIdAndRemove({ _id: req.body.id }, (err) => {
+        if (err) res.send(err);
+        res.send(req.body.id + " removed");
+    })
 });
 
 // Get users from uk ===============================================

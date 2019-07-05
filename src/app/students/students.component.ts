@@ -89,7 +89,7 @@ export class StudentsComponent implements OnInit {
       res => {
         console.log(res);
         this.grades = [];
-        this.goToUk();
+        this.ngOnInit();
       },
       err => console.log(err)
     );
