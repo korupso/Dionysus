@@ -24,6 +24,9 @@ export class StudentsComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute, private sharedService: SharedService, private http: HttpClient) {
   }
 
+  /**
+   * Get all the data at the beginning
+   */
   ngOnInit() {
     let endpoint = "http://localhost:3000/api/uks/specific";
     let endpointAllStudents = "http://localhost:3000/api/students";
@@ -41,12 +44,14 @@ export class StudentsComponent implements OnInit {
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     let options = { headers: headers };
 
+    // Get students from uk
     this.http.post(endpoint, body, options).subscribe(
       res => {
         let realRes: any = res;
         this.students = realRes.studentsFromUk;
         console.log(this.students);
 
+        // Get all students not from uk
         this.http.get(endpointAllStudents).subscribe(
           res => {
             (<any>res).forEach(student => {
@@ -64,6 +69,9 @@ export class StudentsComponent implements OnInit {
     );
   }
 
+  /**
+   * Send the data to the backend for it to save it.
+   */
   save() {
     this.gradesHTML.forEach(gradeHTML => this.grades.push(gradeHTML.innerText));
     console.log(this.grades);
@@ -95,24 +103,11 @@ export class StudentsComponent implements OnInit {
     );
   }
 
-  goToUk() {
-    let endpoint: string = "http://localhost:3000/api/uks/specific";
-    let body = { _id: this.ukId };
-
-    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    let options = { headers: headers };
-
-    console.log(body);
-
-    this.http.post(endpoint, body, options).subscribe(
-      res => {
-        console.log(res);
-        this.router.navigate([`/uks/${this.ukName}`, { _id: this.ukId }]);
-      },
-      err => console.log(err)
-    );
-  }
-
+  /**
+   * Navigates the router to the profile page of a student.
+   * 
+   * @param studentId The ID of the student to go to.
+   */
   goToProfile(studentId: string) {
     this.router.navigate([`/profile/${studentId}`]);
   }

@@ -13,6 +13,9 @@ export class AddstudentComponent implements OnInit {
 
   constructor(private http: HttpClient, private router: Router) { }
 
+  /**
+   * Get all the data at the beginning
+   */
   ngOnInit() {
     this.http.get("http://localhost:3000/api/students").subscribe(
       res => {
@@ -24,10 +27,20 @@ export class AddstudentComponent implements OnInit {
     );
   }
 
+  /**
+   * Navigates the router to the profile page of a student.
+   *
+   * @param studentId The ID of the student to go to.
+   */
   goToProfile(studentId: string) {
     this.router.navigate([`/profile/${studentId}`]);
   }
 
+  /**
+   * Deletes a specific student.
+   * 
+   * @param id The ID of the student to be deleted.
+   */
   deleteStudent(id: string) {
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     let options = { headers: headers };
@@ -46,6 +59,9 @@ export class AddstudentComponent implements OnInit {
     )
   }
 
+  /**
+   * Send the data to the backend for it to save it.
+   */
   save() {
     let newStudent = (<HTMLInputElement>document.getElementById("newStudent")).value;
 
